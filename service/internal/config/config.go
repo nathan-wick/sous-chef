@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -40,13 +41,49 @@ type ReviewConfig struct {
 func LoadConfig(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
 	var config Config
 	if err := yaml.Unmarshal(data, &config); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	if err := loadEnvVariables(&config); err != nil {
+		return nil, fmt.Errorf("failed to load environment variables: %w", err)
+	}
+
+	if err := validateConfig(&config); err != nil {
+		return nil, fmt.Errorf("config validation failed: %w", err)
 	}
 
 	return &config, nil
+}
+
+func loadEnvVariables(config *Config) error {
+	if val := os.Getenv("PLATFORM_URL"); val != "" {
+		config.Platform.Url = val
+	}
+	if val := os.Getenv("PLATFORM_TOKEN"); val != "" {
+		config.Platform.Token = val
+	}
+	if val := os.Getenv("PLATFORM_WEBHOOK_SECRET"); val != "" {
+		config.Platform.WebhookSecret = val
+	}
+
+	return nil
+}
+
+func validateConfig(config *Config) error {
+	if config.Platform.Token == "" {
+		return fmt.Errorf("platform token is required (set PLATFORM_TOKEN secrets.env variable)")
+	}
+	if config.Platform.WebhookSecret == "" {
+		return fmt.Errorf("platform webhook secret is required (set PLATFORM_WEBHOOK_SECRET secrets.env variable)")
+	}
+	if config.Platform.Url == "" {
+		return fmt.Errorf("platform URL is required (set PLATFORM_URL secrets.env variable)")
+	}
+
+	return nil
 }
