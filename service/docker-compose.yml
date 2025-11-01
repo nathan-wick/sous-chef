@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+    networks:
+      - reviewer-network
+
+  reviewer:
+    build: .
+    container_name: code-reviewer
+    depends_on:
+      - ollama
+    volumes:
+      - ./values.yaml:/config/values.yaml:ro
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - reviewer-network
+    environment:
+      - TZ=UTC
+
+volumes:
+  ollama_data:
+
+networks:
+  reviewer-network:
+    driver: bridge
