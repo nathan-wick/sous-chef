@@ -119,6 +119,8 @@ TODO Make the `cloudflare-ddns-update.sh` script run every minute.
 2. Add an access token with `repo`/`api` scope
 3. Copy the token, you'll need it in [step 4](#step-4-define-variables)
 
+TODO Specify the exact permissions needed
+
 ### Step 4: Define Variables
 
 #### Secrets
