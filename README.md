@@ -127,6 +127,8 @@ TODO Specify the exact permissions needed
 
 Create a `secrets.env` file at the repository's root.
 
+For example:
+
 ```env
 PLATFORM_URL=https://github.com
 PLATFORM_TOKEN=
@@ -139,12 +141,29 @@ DOMAIN_ZONE_ID=
 
 #### Preferences
 
-Update the preferences.env file at the repository's root.
+Update the following values in the preferences.env file to match your preferences:
 
-### Step 5: Go!
+- `OLLAMA_MODEL`: The LLM used. `codellama:7b` is a happy medium between speed and quality. If you have more resources and prefer deeper insights, `codellama:13b` is a better option.
+- `OLLAMA_TEMPERATURE`: The creativity or variability of responses. Lower values (`0.2`–`0.4`) make responses more focused and deterministic. Higher values (`0.6`–`0.8`) make them more exploratory.
+- `OLLAMA_TIMEOUT`: Maximum number of seconds to wait for a response.
+- `REVIEW_MAX_FILES`: Maximum number of files the AI will review per request. Helps prevent excessive load on the service when large pull requests are submitted.
+- `REVIEW_MAX_FILE_SIZE`: Maximum number of characters per file the AI will review. Files larger than this will be skipped to keep responses fast and relevant.
+- `REVIEW_PROMPT`: Defines how the AI should approach its code review. You can customize this to match your team’s tone or focus areas (e.g., emphasize readability, security, or test coverage).
+
+### Step 5: Build and Start Containers
 
 Run the following command to build and start containers:
 
 ```bash
 docker-compose up -d
+```
+
+## Troubleshooting
+
+### Docker Uses Too Much Storage
+
+If you start to run low on storage, try clearing your Docker cache by running the following command:
+
+```bash
+docker builder prune -f
 ```

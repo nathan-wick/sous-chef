@@ -53,13 +53,13 @@ func detectPlatformFromToken(token string) string {
 }
 
 func main() {
-	cfg, err := config.LoadConfig("/config/values.yaml")
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
 	llmClient := llm.NewOllamaClient(
-		cfg.Ollama.Host,
+		"ollama:11434",
 		cfg.Ollama.Model,
 		cfg.Ollama.Temperature,
 		cfg.Ollama.Timeout,
@@ -87,12 +87,12 @@ func main() {
 	http.HandleFunc("/health", svc.handleHealth)
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%s", cfg.Service.Host, cfg.Service.Port),
+		Addr:    fmt.Sprintf("%s:%s", "0.0.0.0", "8080"),
 		Handler: http.DefaultServeMux,
 	}
 
 	go func() {
-		log.Printf("Starting server on %s:%s", cfg.Service.Host, cfg.Service.Port)
+		log.Printf("Starting server on %s:%s", "0.0.0.0", "8080")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Server failed: %v", err)
 		}
