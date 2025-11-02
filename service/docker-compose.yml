@@ -17,8 +17,16 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
+    ports:
+      - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+    # TODO Use the user's preferred model
+    command: >
+      sh -c "
+        ollama pull codellama:7b &&
+        ollama api --host 0.0.0.0 --port 11434
+      "
     networks:
       - reviewer-network
     restart: unless-stopped

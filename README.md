@@ -167,3 +167,11 @@ If you start to run low on storage, try clearing your Docker cache by running th
 ```bash
 docker builder prune -f
 ```
+
+### Nonsense Errors
+
+If you're getting errors that don't make sense, your build cache might be incorrect. Run the following command to rebuild without cache.
+
+```bash
+docker-compose build --no-cache
+```
