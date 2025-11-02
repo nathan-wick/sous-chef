@@ -28,8 +28,6 @@ services:
     container_name: reviewer
     depends_on:
       - ollama
-    volumes:
-      - ./values.yaml:/config/values.yaml:ro
     env_file:
       - ../secrets.env
       - ../preferences.env
