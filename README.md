@@ -108,7 +108,7 @@ TODO Make the `cloudflare-ddns-update.sh` script run every minute.
 
 1. Open [GitHub](https://github.com/) or [GitLab](https://about.gitlab.com/) and navigate to the Webhooks section of your repository/project's settings
 2. Add a webhook with the following values:
-   - Payload URL: Your payload URL from [step 2](#step-2-get-the-payload-url) with the `webhook` path, for example, `development-assistant.yourdomain.com/webhook`
+   - Payload URL: Your payload URL from [step 2](#step-2-get-the-payload-url) with the `webhook` path, for example, `https://development-assistant.yourdomain.com/webhook`
    - Content Type: `application/json`
    - Secret: This can be anything, but you'll need to know it in [step 4](#step-4-define-variables)
    - Event/Trigger: `pull/merge requests`

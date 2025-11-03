@@ -98,7 +98,7 @@ func (r *Reviewer) reviewFileWithProgress(ctx context.Context, event *platform.P
 		resultChan <- response
 	}()
 
-	ticker := time.NewTicker(3 * time.Minute)
+	ticker := time.NewTicker(7 * time.Minute)
 	defer ticker.Stop()
 
 	for {
