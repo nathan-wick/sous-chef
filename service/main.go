@@ -24,28 +24,39 @@ type Service struct {
 	gitlab   *platform.GitLabPlatform
 }
 
-func detectPlatformFromToken(token string) string {
-	token = strings.TrimSpace(token)
+func detectPlatform(cfg *config.Config) string {
+	url := strings.ToLower(cfg.Platform.Url)
 
-	if strings.HasPrefix(token, "ghp_") ||
-		strings.HasPrefix(token, "github_pat_") ||
-		strings.HasPrefix(token, "gho_") ||
-		strings.HasPrefix(token, "ghu_") ||
-		strings.HasPrefix(token, "ghs_") ||
-		strings.HasPrefix(token, "ghr_") {
+	switch {
+	case strings.Contains(url, "github"):
 		return "github"
-	}
-
-	if strings.HasPrefix(token, "glpat-") ||
-		strings.HasPrefix(token, "gloas-") ||
-		strings.HasPrefix(token, "glgat-") ||
-		strings.HasPrefix(token, "gldt-") ||
-		strings.HasPrefix(token, "glagent-") {
+	case strings.Contains(url, "gitlab"):
 		return "gitlab"
 	}
 
-	if len(token) >= 20 && len(token) <= 26 {
-		// Could be GitLab legacy token
+	t := cfg.Platform.Token
+
+	switch {
+	case strings.HasPrefix(t, "ghp_"),
+		strings.HasPrefix(t, "github_pat_"),
+		strings.HasPrefix(t, "gho_"),
+		strings.HasPrefix(t, "ghu_"),
+		strings.HasPrefix(t, "ghs_"),
+		strings.HasPrefix(t, "ghr_"):
+		return "github"
+	}
+
+	switch {
+	case strings.HasPrefix(t, "glpat-"),
+		strings.HasPrefix(t, "gloas-"),
+		strings.HasPrefix(t, "glgat-"),
+		strings.HasPrefix(t, "gldt-"),
+		strings.HasPrefix(t, "glagent-"):
+		return "gitlab"
+	}
+
+	switch tl := len(t); {
+	case tl >= 20 && tl <= 26:
 		return "gitlab"
 	}
 
@@ -72,7 +83,7 @@ func main() {
 		reviewer: rev,
 	}
 
-	detectedPlatform := detectPlatformFromToken(cfg.Platform.Token)
+	detectedPlatform := detectPlatform(cfg)
 	if detectedPlatform == "github" {
 		svc.github = platform.NewGitHubPlatform(cfg.Platform.Token, cfg.Platform.WebhookSecret)
 		rev.SetGitHubPlatform(svc.github)
@@ -124,7 +135,7 @@ func (s *Service) handleWebhook(w http.ResponseWriter, r *http.Request) {
 	var event *platform.PullRequestEvent
 	var err error
 
-	detectedPlatform := detectPlatformFromToken(s.config.Platform.Token)
+	detectedPlatform := detectPlatform(s.config)
 	if detectedPlatform == "github" {
 		if err := s.github.ValidateWebhook(r); err != nil {
 			log.Printf("Webhook validation failed: %v", err)
@@ -170,7 +181,7 @@ func (s *Service) processReview(event *platform.PullRequestEvent) {
 		return
 	}
 
-	detectedPlatform := detectPlatformFromToken(s.config.Platform.Token)
+	detectedPlatform := detectPlatform(s.config)
 	if detectedPlatform == "github" {
 		err = s.github.PostComment(ctx, event.Owner, event.Repo, event.Number, review)
 	} else {

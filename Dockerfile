@@ -1,7 +1,8 @@
 FROM golang:1.21-alpine AS builder
 WORKDIR /app
-COPY . .
+COPY service/go.mod service/go.sum ./
 RUN go mod download
+COPY service/ .
 RUN CGO_ENABLED=0 GOOS=linux go build -o /reviewer main.go
 
 FROM alpine:latest
