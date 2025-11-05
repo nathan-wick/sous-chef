@@ -22,6 +22,22 @@ TODO
 
 TODO
 
+## Estimated Cost
+
+### Self-Hosted LLM
+
+Running a self-hosted LLM gives you **full control** and **privacy**, but requires substantial compute resources and maintenance.
+
+Total upfront hardware cost: ~$5,000 depending on configuration.
+
+Monthly power and maintenance cost: ~$100 depending on GPU load and local rates.
+
+### API-based LLM
+
+Using an API-based LLM requires **no additional hardware** and **scales automatically**, but you pay per request or per token generated.
+
+Monthly cost per full-time developer: ~$1 depending on usage.
+
 ## Getting Started
 
 ### Prerequisites
@@ -29,10 +45,11 @@ TODO
 - [GitHub](https://github.com/) or [GitLab](https://about.gitlab.com/) account with admin access to repositories
 - Domain name with admin access to DNS records
 - Server with [Git](https://git-scm.com/install/linux) and [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) installed
-  - System RAM: Minimum 8 GB; 32 GB recommended for stable and responsive performance
-  - GPU VRAM: Minimum 14 GB; 24 GB recommended for faster inference and larger context windows
-  - Storage: NVMe SSD (500 GB recommended) for fast model loading and data access
   - Operating System: Latest [Ubuntu Server](https://ubuntu.com/download/server) recommended for efficiency, compatibility, and long-term support
+  - If you're self-hosting the LLM, you'll need the following hardware. Otherwise, minimal hardware will suffice
+    - System RAM: Minimum 32 GB recommended for stable and responsive performance
+    - GPU VRAM: Minimum 24 GB recommended for faster inference and larger context windows
+    - Storage: NVMe SSD (minimum 500 GB recommended) for fast model loading and data access
 
 ### Step 1: Clone the Development Assistant
 
@@ -48,25 +65,12 @@ The payload URL is your server's publicly accessible URL where your Development 
 
 #### Port Forwarding
 
-Create 2 new port forwarding rules on your network's router with the following values for port `443` and `80`:
-
-TODO May only need 443
-
-Port `443`:
+Create 2 new port forwarding rules on your network's router with the following values for port `443`:
 
 - Service Name: This can be anything, for example, `Development Assistant`
 - External Port: `443`
 - Internal IP: Your server's **local** IP address
 - Internal Port: `443`
-- Protocol: `TCP`
-- Status: `Enabled`
-
-Port `80`:
-
-- Service Name: This can be anything, for example, `Development Assistant`
-- External Port: `80`
-- Internal IP: Your server's **local** IP address
-- Internal Port: `80`
 - Protocol: `TCP`
 - Status: `Enabled`
 
@@ -116,10 +120,10 @@ TODO Make the `cloudflare-ddns-update.sh` script run every minute.
 #### Access Token
 
 1. Open [GitHub](https://github.com/) or [GitLab](https://about.gitlab.com/) and navigate to the Access Tokens section of your account's settings
-2. Add an access token with `repo`/`api` scope
+2. Add an access token with `repo`/`api` scope, and the following permissions:
+   - Read repository files
+   - Write pull/merge request comments
 3. Copy the token, you'll need it in [step 4](#step-4-define-variables)
-
-TODO Specify the exact permissions needed
 
 ### Step 4: Define Variables
 
