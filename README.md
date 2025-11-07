@@ -30,6 +30,10 @@ Coming soon!
 
 Coming soon!
 
+## How It Works
+
+![diagram](https://github.com/nathan-wick/development-assistant/blob/main/development-assistant.png)
+
 ## Estimated Cost
 
 ### Self-Hosted LLM
