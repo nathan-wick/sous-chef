@@ -1,26 +1,34 @@
 # Development Assistant
 
-Self-hosted LLM software development assistant by [Nathan Wick](https://nathanwick.com).
-
-TODO
+**Professional AI-powered code review for modern development teams** — by [Nathan Wick](https://nathanwick.com)
 
 ### Table of Contents
 
-TODO
+- [Features](#features)
+  - [Code Reviewer](#code-reviewer)
+  - [IDE Advanced Autocomplete](#ide-advanced-autocomplete)
+  - [Chat Bot](#chat-bot)
+- [Estimated Cost](#estimated-cost)
+- [Getting Started](#getting-started)
 
 ## Features
 
-### 1. Code Reviewer
+### Code Reviewer
 
-TODO
+The average software developer spends **5 hours per week** reviewing code. Meanwhile, subtle bugs, security vulnerabilities, and technical debt slip through even the most careful human reviews.
 
-### 2. IDE Advanced Autocomplete
+The Development Assistant Code Reviewer serves as an always-available senior developer on your team, reviewing code 24/7 without fatigue, bias, or delays.
 
-TODO
+Other software development teams have observed many benefits from similar AI code reviewers:
+- Microsoft's large-scale internal implementation observed a significant improvement in code quality, developer learning, and a 10 - 20% quicker median review completion time. ([source](https://devblogs.microsoft.com/engineering-at-microsoft/enhancing-code-quality-at-scale-with-ai-powered-code-reviews/))
 
-### 3. Chat Bot
+### IDE Advanced Autocomplete
 
-TODO
+Coming soon!
+
+### Chat Bot
+
+Coming soon!
 
 ## Estimated Cost
 
@@ -28,15 +36,15 @@ TODO
 
 Running a self-hosted LLM gives you **full control** and **privacy**, but requires substantial compute resources and maintenance.
 
-Total upfront hardware cost: ~$5,000 depending on configuration.
+Total upfront hardware cost: ~$5,000, depending on configuration.
 
-Monthly power and maintenance cost: ~$100 depending on GPU load and local rates.
+Monthly power and maintenance cost: ~$100, depending on GPU load and local rates.
 
 ### API-based LLM
 
 Using an API-based LLM requires **no additional hardware** and **scales automatically**, but you pay per request or per token generated.
 
-Monthly cost per full-time developer: ~$1 depending on usage.
+Monthly cost per full-time developer: ~$1, depending on usage.
 
 ## Getting Started
 
@@ -141,7 +149,7 @@ Create a `secrets.env` file at the repository's root with the following values:
 
 Update the following values in the settings.env file to match your settings:
 
-- `PLATFORM_URL`: The URL to your git hosting platform (github/gitlab).
+- `PLATFORM_URL`: The URL to your git hosting platform (GitHub/GitLab).
 - `DOMAIN_NAME`: Your payload URL's domain name from [step 2](#step-2-get-the-payload-url), for example, `development-assistant.yourdomain.com`
 - `LLM_MODEL`: The LLM model used.
   - If you're using Ollama, any model in [Ollama's library](https://ollama.com/library) will work, but `codellama:13b` or better is recommended.
