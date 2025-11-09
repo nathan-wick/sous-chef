@@ -33,7 +33,7 @@ Coming soon!
 
 ## How It Works
 
-![diagram](https://github.com/nathan-wick/development-assistant/blob/main/assets/images/development-assistant.png)
+![diagram](https://github.com/nathan-wick/development-assistant/blob/main/assets/images/diagram.png)
 
 ## Estimated Cost
 
