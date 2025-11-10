@@ -1,6 +1,6 @@
 # Development Assistant
 
-**Professional AI-powered code review for modern development teams** — by [Nathan Wick](https://nathanwick.com)
+Automated code reviewer for modern development teams - by [Nathan Wick](https://nathanwick.com).
 
 ### Table of Contents
 
@@ -25,6 +25,10 @@ Other software development teams have observed many benefits from similar machin
 - **Microsoft**: Large-scale internal deployment showed significant code quality improvements, accelerated developer learning, and **10-20% faster median review completion time** ([source](https://devblogs.microsoft.com/engineering-at-microsoft/enhancing-code-quality-at-scale-with-ai-powered-code-reviews/)).
 - **Google**: Tested ML code review tools, and found that **40% of suggestions led to developers modifying their code** to address the flagged issues ([source](https://newsletter.getdx.com/p/ai-assisted-code-reviews-at-google)).
 - **Industry-wide**: Studies show ML coding assistants give developers a **26% increase in productivity**, freeing them from repetitive checks to focus on architectural decisions and complex components ([source](https://www.infoq.com/news/2024/09/copilot-developer-productivity/)).
+
+#### Live Example
+
+View [this example](https://github.com/nathan-wick/test-development-assistant/pull/9#issuecomment-3509078039) to see Code Reviewer in action!
 
 ## How It Works
 
