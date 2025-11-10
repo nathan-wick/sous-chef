@@ -6,8 +6,6 @@ Automated code reviewer for modern development teams - by [Nathan Wick](https://
 
 - [Features](#features)
   - [Code Reviewer](#code-reviewer)
-  - [IDE Advanced Autocomplete](#ide-advanced-autocomplete)
-  - [Chat Bot](#chat-bot)
 - [How It Works](#how-it-works)
 - [Estimated Cost](#estimated-cost)
 - [Getting Started](#getting-started)
@@ -40,13 +38,13 @@ View [this example](https://github.com/nathan-wick/test-development-assistant/pu
 
 Running a self-hosted LLM gives you **full control** and **privacy**, but requires substantial compute resources and maintenance.
 
-| Category                         | Estimated Cost Per 20 Developers |
-| -------------------------------- | -------------------------------- |
-| **Upfront Hardware**             | $12,000                          |
-| **Monthly Hardware Maintenance** | $100                             |
-| **Monthly Power**                | $250                             |
-| **Monthly API Fees**             | $0                               |
-| **Total**                        | $12,000 + $350 monthly           |
+| Category                         | Estimated Cost Per 1-50 Developers |
+| -------------------------------- | ---------------------------------- |
+| **Upfront Hardware**             | $12,000                            |
+| **Monthly Hardware Maintenance** | $100                               |
+| **Monthly Power**                | $250                               |
+| **Monthly API Fees**             | $0                                 |
+| **Total**                        | $12,000 upfront + $350 monthly     |
 
 ### ☁️ API-Based LLM
 
@@ -57,8 +55,43 @@ Using an API-based LLM requires **no additional hardware**, **scales automatical
 | **Upfront Hardware**             | $40                              |
 | **Monthly Hardware Maintenance** | $1                               |
 | **Monthly Power**                | $5                               |
-| **Monthly API Fees**             | $50                              |
-| **Total**                        | $40 + $56 monthly                |
+| **Monthly API Fees**             | $4                               |
+| **Total**                        | $40 upfront + $10 monthly        |
+
+#### Estimated Monthly API Cost Formula
+
+``` python
+average_lines_per_hour = 20
+average_hours_per_day = 8
+average_input_tokens_per_line = 10
+average_output_tokens_per_line = 10
+input_token_cost_per_million = 1.25
+output_token_cost_per_million = 10
+number_of_developers = 10
+average_working_days_per_month = 22
+
+developer_daily_input_cost = (
+    average_lines_per_hour
+    * average_hours_per_day
+    * average_input_tokens_per_line
+    * (input_token_cost_per_million / 1_000_000)
+)
+
+developer_daily_output_cost = (
+    average_lines_per_hour
+    * average_hours_per_day
+    * average_output_tokens_per_line
+    * (output_token_cost_per_million / 1_000_000)
+)
+
+developer_daily_cost = developer_daily_input_cost + developer_daily_output_cost
+
+estimated_monthly_api_cost = (
+    developer_daily_cost * number_of_developers * average_working_days_per_month
+)
+
+print(f"Estimated Monthly API Cost: ${estimated_monthly_api_cost:.2f}")
+```
 
 #### ⚠️ Data Privacy Note
 
