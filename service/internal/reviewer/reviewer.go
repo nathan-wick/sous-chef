@@ -43,23 +43,23 @@ func (r *Reviewer) postComment(ctx context.Context, event *platform.PullRequestE
 }
 
 func (r *Reviewer) ReviewPullRequest(ctx context.Context, event *platform.PullRequestEvent) (string, error) {
-	greetingMsg := "👋 Hello! I'm reviewing your code changes now. Please give me a moment..."
+	greetingMsg := "🤖 Hello! I'm reviewing your changes now. This may take a moment..."
 	_ = r.postComment(ctx, event, greetingMsg)
 
 	var reviews []string
 	fileCount := 0
 
-	reviews = append(reviews, "My review is complete 😃! Please note that while I strive for accuracy, it's important to verify all recommendations before implementing them.")
+	reviews = append(reviews, "# 🤖 Automated Review\n\nPlease note that while I strive for accuracy, it's important to **verify all recommendations before implementing them**. This review is not meant to replace human review, but to accelerate it by catching common issues early.")
 
 	for _, file := range event.Files {
 		if fileCount >= r.config.Review.MaxFiles {
-			reviews = append(reviews, "⚠️ Too many files to review. Only reviewed the first files.")
+			reviews = append(reviews, fmt.Sprintf("🛑 Too many files to review. Only reviewed the first %d files.", r.config.Review.MaxFiles))
 			break
 		}
 
 		patchSize := len(file.Patch)
 		if patchSize > r.config.Review.MaxFileSizeCharacters {
-			reviews = append(reviews, fmt.Sprintf("⚠️ Skipped `%s`: File changes are too large to review. It contains %d characters, exceeding the %d-character limit.", file.Filename, patchSize, r.config.Review.MaxFileSizeCharacters))
+			reviews = append(reviews, fmt.Sprintf("### 🐘 📄 %s\n\nFile changes are too large to review. It contains %d characters, exceeding the %d-character limit.", file.Filename, patchSize, r.config.Review.MaxFileSizeCharacters))
 			continue
 		}
 
@@ -69,19 +69,21 @@ func (r *Reviewer) ReviewPullRequest(ctx context.Context, event *platform.PullRe
 
 		review, err := r.reviewFileWithProgress(ctx, event, file)
 		if err != nil {
-			reviews = append(reviews, fmt.Sprintf("❌ Error reviewing `%s`: %v", file.Filename, err))
+			reviews = append(reviews, fmt.Sprintf("### 🛑 📄 %s\n\nError reviewing: %v", file.Filename, err))
 			continue
 		}
 
-		if review != "" {
-			reviews = append(reviews, fmt.Sprintf("### 📄 %s\n\n%s", file.Filename, review))
+		if review == "" || strings.Contains(strings.ToLower(review), "no issues") {
+			reviews = append(reviews, fmt.Sprintf("### ✅ 📄 %s\n\n%s", file.Filename, review))
+		} else {
+			reviews = append(reviews, fmt.Sprintf("### ⚠️ 📄 %s\n\n%s", file.Filename, review))
 		}
 
 		fileCount++
 	}
 
 	if len(reviews) == 0 {
-		return "All changes look good! ✅", nil
+		reviews = append(reviews, "No changes to review.")
 	}
 
 	return strings.Join(reviews, "\n\n---\n\n"), nil
@@ -119,7 +121,7 @@ func (r *Reviewer) reviewFileWithProgress(ctx context.Context, event *platform.P
 }
 
 func (r *Reviewer) reviewFile(file platform.FileChange) (string, error) {
-	prompt := fmt.Sprintf("%s\n\nFile: %s\n\nChanges:\n```\n%s\n```\n\nProvide a brief review:",
+	prompt := fmt.Sprintf("%s\n\nFile: %s\n\nChanges:\n```\n%s\n```",
 		r.config.Review.ReviewPrompt,
 		file.Filename,
 		file.Patch,

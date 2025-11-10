@@ -8,6 +8,7 @@
   - [Code Reviewer](#code-reviewer)
   - [IDE Advanced Autocomplete](#ide-advanced-autocomplete)
   - [Chat Bot](#chat-bot)
+- [How It Works](#how-it-works)
 - [Estimated Cost](#estimated-cost)
 - [Getting Started](#getting-started)
 
@@ -17,19 +18,13 @@
 
 The average software developer spends **5 hours per week** reviewing code. Meanwhile, subtle bugs, security vulnerabilities, and technical debt slip through even the most careful human reviews.
 
-The Development Assistant Code Reviewer serves as an always-available senior developer on your team, reviewing code 24/7 without fatigue, bias, or delays.
+The Development Assistant Code Reviewer serves as an always-available first-pass reviewer on your team, reviewing code 24/7 without fatigue, bias, or delays.
 
-Other software development teams have observed many benefits from similar AI code reviewers:
+Other software development teams have observed many benefits from similar machine learning (ML) code review tools:
 
-- Microsoft's large-scale internal implementation observed a significant improvement in code quality, developer learning, and a 10 - 20% quicker median review completion time. ([source](https://devblogs.microsoft.com/engineering-at-microsoft/enhancing-code-quality-at-scale-with-ai-powered-code-reviews/))
-
-### IDE Advanced Autocomplete
-
-Coming soon!
-
-### Chat Bot
-
-Coming soon!
+- **Microsoft**: Large-scale internal deployment showed significant code quality improvements, accelerated developer learning, and **10-20% faster median review completion time** ([source](https://devblogs.microsoft.com/engineering-at-microsoft/enhancing-code-quality-at-scale-with-ai-powered-code-reviews/)).
+- **Google**: Tested ML code review tools, and found that **40% of suggestions led to developers modifying their code** to address the flagged issues ([source](https://newsletter.getdx.com/p/ai-assisted-code-reviews-at-google)).
+- **Industry-wide**: Studies show ML coding assistants give developers a **26% increase in productivity**, freeing them from repetitive checks to focus on architectural decisions and complex components ([source](https://www.infoq.com/news/2024/09/copilot-developer-productivity/)).
 
 ## How It Works
 
@@ -37,23 +32,37 @@ Coming soon!
 
 ## Estimated Cost
 
-### Self-Hosted LLM
+### 🏠 Self-Hosted LLM
 
 Running a self-hosted LLM gives you **full control** and **privacy**, but requires substantial compute resources and maintenance.
 
-Total **upfront** hardware cost: **~$5,000** depending on configuration.
+| Category                         | Estimated Cost Per 20 Developers |
+| -------------------------------- | -------------------------------- |
+| **Upfront Hardware**             | $12,000                          |
+| **Monthly Hardware Maintenance** | $100                             |
+| **Monthly Power**                | $250                             |
+| **Monthly API Fees**             | $0                               |
+| **Total**                        | $12,000 + $350 monthly           |
 
-**Monthly** power and maintenance cost: **~$100** depending on GPU load and local rates.
-
-### API-based LLM
+### ☁️ API-Based LLM
 
 Using an API-based LLM requires **no additional hardware**, **scales automatically**, and is significantly more **economical** than self-hosting.
 
-**Monthly** cost per full-time developer: **~$1** depending on usage.
+| Category                         | Estimated Cost Per 10 Developers |
+| -------------------------------- | -------------------------------- |
+| **Upfront Hardware**             | $40                              |
+| **Monthly Hardware Maintenance** | $1                               |
+| **Monthly Power**                | $5                               |
+| **Monthly API Fees**             | $50                              |
+| **Total**                        | $40 + $56 monthly                |
+
+#### ⚠️ Data Privacy Note
+
+Many API LLM providers use your data to train their models. If handling sensitive data, you will want to opt into Zero Data Retention (ZDR) to prevent any training from, or storage of your data.
 
 ## Getting Started
 
-Development Assistant can be set up in **five straightforward steps**, generally taking about **one hour to complete**.
+Development Assistant can be set up in **5 straightforward steps**, generally taking about **one hour to complete**.
 
 ### Prerequisites
 
@@ -61,10 +70,15 @@ Development Assistant can be set up in **five straightforward steps**, generally
 - Domain name with admin access to DNS records or nameservers
 - Server with [Git](https://git-scm.com/install/linux) and [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) installed
   - Operating System: Latest [Ubuntu Server](https://ubuntu.com/download/server) recommended for efficiency, compatibility, and long-term support.
-  - The following hardware is required for self-hosting the LLM; otherwise, minimal hardware is sufficient.
-    - System RAM: Minimum 32 GB recommended for stable and responsive performance.
-    - GPU VRAM: Minimum 24 GB recommended for faster inference and larger context windows.
-    - Storage: NVMe SSD (minimum 500 GB recommended) for fast model loading and data access.
+  - Hardware: See the [following hardware minimum requirements](#server-hardware-minimum-requirements) for stable and responsive performance, faster inference and larger context windows, and model loading and data access.
+
+#### Server Hardware Minimum Requirements
+
+| Component      | API-Based LLM        | Self-Hosted 30B Model | Self-Hosted 70B Model |
+| -------------- | -------------------- | --------------------- | --------------------- |
+| **System RAM** | 2 GB                 | 20 GB                 | 48 GB                 |
+| **GPU VRAM**   | Any modern processor | 32 GB                 | 64 GB                 |
+| **Storage**    | 50 GB                | NVMe SSD, 500 GB      | NVMe SSD, 1 TB        |
 
 ### Step 1: Clone the Development Assistant
 
@@ -80,7 +94,7 @@ The payload URL is your server's publicly accessible URL where your Development 
 
 #### Port Forwarding
 
-Create 2 new port forwarding rules on your network's router with the following values for port `443`:
+Create a new port forwarding rule on your network's router:
 
 - Service Name: This can be anything, for example, `Development Assistant`
 - External Port: `443`
@@ -159,7 +173,7 @@ Update the following values in the settings.env file to match your settings:
 - `PLATFORM_URL`: The URL to your git hosting platform (GitHub/GitLab).
 - `DOMAIN_NAME`: Your payload URL's domain name from [step 2](#step-2-get-the-payload-url), for example, `development-assistant.yourdomain.com`
 - `LLM_MODEL`: The LLM model used.
-  - If you're self-hosting your LLM, any model in [Ollama's library](https://ollama.com/library) will work, but `codellama:13b` or better is recommended.
+  - If you're self-hosting your LLM, any model in [Ollama's library](https://ollama.com/library) will work, but `codellama:34b` or better is recommended.
   - If you're using an API-based LLM, any model in [Gemini's library](https://ai.google.dev/gemini-api/docs/models) will work.
 - `LLM_TEMPERATURE`: The creativity or variability of responses. Lower values (`0.2`–`0.4`) make responses more focused and deterministic. Higher values (`0.6`–`0.8`) make them more exploratory.
 - `LLM_TIMEOUT`: Maximum number of seconds to wait for a response.

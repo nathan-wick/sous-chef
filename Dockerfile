@@ -6,7 +6,7 @@ COPY service/ .
 RUN CGO_ENABLED=0 GOOS=linux go build -o /reviewer main.go
 
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+RUN apk update && apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /reviewer .
 EXPOSE 8080
