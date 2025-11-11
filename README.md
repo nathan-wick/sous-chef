@@ -58,7 +58,7 @@ Using an API-based LLM requires **no additional hardware**, **scales automatical
 | **Monthly API Fees**             | $4                               |
 | **Total**                        | $40 upfront + $10 monthly        |
 
-#### Estimated Monthly API Cost Formula
+#### 🧮 Estimated Monthly API Cost Formula
 
 ``` python
 average_lines_per_hour = 20
@@ -93,9 +93,30 @@ estimated_monthly_api_cost = (
 print(f"Estimated Monthly API Cost: ${estimated_monthly_api_cost:.2f}")
 ```
 
-#### ⚠️ Data Privacy Note
+#### 🤔 Why So Cheap?
 
-Many API LLM providers use your data to train their models. If handling sensitive data, you will want to opt into Zero Data Retention (ZDR) to prevent any training from, or storage of your data.
+API LLM providers can offer services at costs that self-hosting cannot beat for many reasons:
+
+- **Economies of Scale**: Providers run massive inference clusters serving thousands of customers simultaneously. This allows them to:
+  - Amortize fixed costs (data center buildout, power infrastructure, networking) across a huge customer base.
+  - Negotiate better pricing on hardware, electricity, and bandwidth due to volume.
+  - Achieve much higher GPU utilization rates.
+  - Group many user requests together to process them in parallel.
+  - Cache common requests, significantly reducing redundant computations.
+  - Use techniques like quantization, pruning, and knowledge distillation to reduce the size of models.
+- **Competition**: The API LLM market is competitive, and providers strategically set prices to gain market share.
+
+#### 🕵️‍♂️ Data Privacy
+
+Code Reviewer will send patches of your code to your API LLM provider. **If handling sensitive data, opt into Zero Data Retention (ZDR)** to prevent any training from, or storage of, your data.
+
+If sending code patches to an external service concerns you, consider:
+
+- **Major providers have strong legal and financial incentives to protect your data**. Companies like Anthropic, OpenAI, and Google have multi-billion-dollar valuations that would be destroyed by a data breach or misuse scandal. Their entire business model depends on trust.
+- **Verified security**. SOC 2 Type II and ISO 27001 certifications require regular third-party audits.
+- **Zero retention**. With ZDR, code is processed in memory and immediately discarded—no storage, training, or logs.
+- **You're likely already exposed**. GitHub Copilot and similar tools send entire codebases externally. Developers routinely share code on Stack Overflow and GitHub. Controlled API calls with ZDR are arguably safer.
+- **Blacklisting available**. Code Reviewer can ignore files by keyword.
 
 ## Getting Started
 
@@ -107,7 +128,7 @@ Development Assistant can be set up in **5 straightforward steps**, generally ta
 - Domain name with admin access to DNS records or nameservers
 - Server with [Git](https://git-scm.com/install/linux) and [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) installed
   - Operating System: Latest [Ubuntu Server](https://ubuntu.com/download/server) recommended for efficiency, compatibility, and long-term support.
-  - Hardware: See the [following hardware minimum requirements](#server-hardware-minimum-requirements) for stable and responsive performance, faster inference and larger context windows, and model loading and data access.
+  - Hardware: See the [following hardware minimum requirements](#server-hardware-minimum-requirements) for stable and responsive performance, faster inference, and larger context windows, and model loading and data access.
 
 #### Server Hardware Minimum Requirements
 
