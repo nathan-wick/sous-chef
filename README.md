@@ -87,15 +87,15 @@ Development Assistant can be set up in **5 straightforward steps**, generally ta
 - Domain name with admin access to DNS records or nameservers
 - Server with [Git](https://git-scm.com/install/linux) and [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) installed
   - Operating System: Latest [Ubuntu Server](https://ubuntu.com/download/server) recommended for efficiency, compatibility, and long-term support.
-  - Hardware: See the [following hardware minimum requirements](#server-hardware-minimum-requirements) for stable and responsive performance, faster inference, and larger context windows, and model loading and data access.
+  - Hardware: See the [following hardware minimum requirements](#server-hardware-minimum-requirements).
 
 #### Server Hardware Minimum Requirements
 
-| Component      | API-Based LLM        | Self-Hosted 70B Model |
-| -------------- | -------------------- | --------------------- |
-| **System RAM** | 2 GB                 | 48 GB                 |
-| **GPU VRAM**   | Any modern processor | 64 GB                 |
-| **Storage**    | 50 GB                | NVMe SSD, 1 TB        |
+| Component      | API-Based LLM        | Self-Hosted 70B LLM |
+| -------------- | -------------------- | ------------------- |
+| **System RAM** | 2 GB                 | 48 GB               |
+| **GPU VRAM**   | Any modern processor | 64 GB               |
+| **Storage**    | 50 GB                | NVMe SSD, 1 TB      |
 
 ### Step 1: Clone the Development Assistant
 
@@ -190,7 +190,7 @@ Update the following values in the settings.env file to match your settings:
 - `PLATFORM_URL`: The URL to your git hosting platform (GitHub/GitLab).
 - `DOMAIN_NAME`: Your payload URL's domain name from [step 2](#step-2-get-the-payload-url), for example, `development-assistant.yourdomain.com`
 - `LLM_MODEL`: The LLM model used.
-  - If you're self-hosting your LLM, any model in [Ollama's library](https://ollama.com/library) will work, but `codellama:34b` or better is recommended.
+  - If you're self-hosting your LLM, any model in [Ollama's library](https://ollama.com/library) will work.
   - If you're using an API-based LLM, any model in [Gemini's library](https://ai.google.dev/gemini-api/docs/models) will work.
 - `LLM_TEMPERATURE`: The creativity or variability of responses. Lower values (`0.2`–`0.4`) make responses more focused and deterministic. Higher values (`0.6`–`0.8`) make them more exploratory.
 - `LLM_TIMEOUT`: Maximum number of seconds to wait for a response.
