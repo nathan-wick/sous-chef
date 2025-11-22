@@ -46,6 +46,30 @@ class Reviewer:
         
         return False
 
+    async def review_file(self, file: FileChange) -> str:
+        prompt = (
+            f"{self.configuration.review.review_prompt}\n\n"
+            f"File: {file.filename}\n\n"
+            f"Changes:\n```\n{file.patch}\n```"
+        )
+        
+        response = await self.llm_client.generate(prompt)
+        return response.strip()
+    
+    def is_rate_limit_error(self, error: Exception) -> bool:
+        return "429" in str(error)
+    
+    async def review_file_with_retry(self, file: FileChange, reviewNumber: int, maximumRetries: int, currentRetry: int = 0) -> str:
+        try:
+            return await self.review_file(file)
+        except Exception as error:
+            if self.is_rate_limit_error(error) and currentRetry < maximumRetries:
+                logger.warning(f"Rate limit hit for review #{reviewNumber}, retrying in 10 seconds...")
+                await asyncio.sleep(10)
+                currentRetry += 1
+                return await self.review_file_with_retry(file, reviewNumber, maximumRetries, currentRetry)
+            raise
+
     async def review_pull_request(self, event: PullRequestEvent) -> str:
         greeting_message = (
             "🤖 Hello! I'm reviewing your changes now. This may take a moment..."
@@ -69,6 +93,7 @@ class Reviewer:
                     f"🛑 Too many files to review. Only reviewed the first "
                     f"{maximum_files} files."
                 )
+                logger.info(f"Maximum file review limit reached for review #{event.number}")
                 break
 
             if self.is_file_blocked(file.filename):
@@ -76,6 +101,7 @@ class Reviewer:
                     f"### ⏭️ 📄 {file.filename}\n\n"
                     f"Skipped review."
                 )
+                logger.info(f"Skipped reviewing {file.filename} for review #{event.number} because the file's name had a blocked keyword")
                 continue
 
             patch_size = len(file.patch)
@@ -86,57 +112,34 @@ class Reviewer:
                     f"### 🐘 📄 {file.filename}\n\n"
                     f"File changes are too large to review."
                 )
+                logger.info(f"Skipped reviewing {file.filename} for review #{event.number} because the file's changes are too large")
                 continue
 
             if file.status == "removed":
+                logger.info(f"Skipped reviewing {file.filename} for review #{event.number} because the file was removed")
                 continue
 
             try:
-                review = await self.review_file_with_progress(event, file)
+                review = await self.review_file_with_retry(file, event.number, 3)
                 
                 if not review or "no issues" in review.lower():
-                    reviews.append(f"### ✅ 📄 {file.filename}\n\n{review}")
+                    reviews.append(f"### ✅ 📄 {file.filename}\n\nNo issues detected.")
                 else:
                     reviews.append(f"### ⚠️ 📄 {file.filename}\n\n{review}")
                 
                 file_count += 1
+
+                logger.info(f"Finished reviewing {file.filename} for review #{event.number}")
             except Exception as error:
                 reviews.append(
                     f"### 🌋 📄 {file.filename}\n\n"
                     f"Error reviewing: {error}"
                 )
+                logger.error(f"Errored while reviewing {file.filename} for review #{event.number}: {error}")
 
         if len(reviews) <= 1:
             reviews.append("No changes to review.")
 
+        logger.info(f"Review #{event.number} is complete")
+
         return "\n\n---\n\n".join(reviews)
-
-    async def review_file_with_progress(
-        self, event: PullRequestEvent, file: FileChange
-    ) -> str:
-        review_task = asyncio.create_task(self.review_file(file))
-        
-        progress_interval = 5 * 60
-        
-        while True:
-            try:
-                review = await asyncio.wait_for(review_task, timeout=progress_interval)
-                return review
-            except asyncio.TimeoutError:
-                progress_message = (
-                    f"🔄 Still reviewing `{file.filename}`... "
-                    f"Thanks for your patience!"
-                )
-                await self.post_comment(event, progress_message)
-            except Exception as error:
-                raise error
-
-    async def review_file(self, file: FileChange) -> str:
-        prompt = (
-            f"{self.configuration.review.review_prompt}\n\n"
-            f"File: {file.filename}\n\n"
-            f"Changes:\n```\n{file.patch}\n```"
-        )
-        
-        response = await self.llm_client.generate(prompt)
-        return response.strip()

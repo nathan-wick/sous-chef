@@ -16,7 +16,10 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
-
+class AfcFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord):
+        return 'AFC' not in record.getMessage()
+logging.getLogger().addFilter(AfcFilter())
 
 class Service:
 
