@@ -1,6 +1,8 @@
 # Development Assistant
 
-Automated code reviewer for modern development teams - by [Nathan Wick](https://nathanwick.com).
+An automated code reviewer that provides instant, intelligent feedback on every pull/merge request.
+
+Created by [Nathan Wick](https://nathanwick.com)
 
 ### Table of Contents
 
@@ -59,9 +61,9 @@ Using an API-based LLM requires **no additional hardware**, **scales automatical
 | **Monthly Operating** | $5               | $5             | $5         |
 | **Monthly API Fees**  | $1               | $4             | $6         |
 
-(as of November, 2025)
+(as of November 2025)
 
-#### 🤔 Why So Cheap?
+#### 🤔 Why So Affordable?
 
 API LLM providers can offer services at costs that self-hosting cannot beat for the following reasons:
 
