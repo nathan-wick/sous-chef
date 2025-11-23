@@ -1,7 +1,7 @@
 development-assistant.yourdomain.com {
     reverse_proxy reviewer:8080 {
         health_uri /health
-        health_interval 30s
+        health_interval 60s
         health_timeout 5s
         
         transport http {

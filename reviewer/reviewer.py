@@ -64,8 +64,8 @@ class Reviewer:
             return await self.review_file(file)
         except Exception as error:
             if self.is_rate_limit_error(error) and currentRetry < maximumRetries:
-                logger.warning(f"Rate limit hit for review #{reviewNumber}, retrying in 10 seconds...")
-                await asyncio.sleep(10)
+                logger.warning(f"Rate limit hit for review #{reviewNumber}, retrying in 30 seconds...")
+                await asyncio.sleep(30)
                 currentRetry += 1
                 return await self.review_file_with_retry(file, reviewNumber, maximumRetries, currentRetry)
             raise
