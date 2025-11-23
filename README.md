@@ -1,8 +1,10 @@
-# Development Assistant
+![cover](https://github.com/nathan-wick/sous-chef/blob/main/assets/images/cover.png)
 
-An automated code reviewer that provides instant, intelligent feedback on every pull/merge request.
+A Head Chef shouldn't be peeling potatoes. 🥔
 
-Created by [Nathan Wick](https://nathanwick.com)
+Yet, that is exactly what we ask of our best software engineers. We ask them to hunt for missing semicolons, typos, and unused variables while the architectural issues hide in the noise.
+
+Your team needs Sous Chef: **An automated code reviewer that provides instant, intelligent feedback on every pull/merge request.** Created by [Nathan Wick](https://nathanwick.com).
 
 ### Table of Contents
 
@@ -17,7 +19,7 @@ Created by [Nathan Wick](https://nathanwick.com)
 
 The average software developer spends **5 hours per week** reviewing code. Meanwhile, subtle bugs, security vulnerabilities, and technical debt slip through even the most careful human reviews.
 
-The Development Assistant Code Reviewer serves as an always-available first-pass reviewer on your team, reviewing code 24/7 without fatigue, bias, or delays.
+Sous Chef serves as an always-available first-pass reviewer on your team, reviewing code 24/7 without fatigue, bias, or delays.
 
 Other software development teams have observed many benefits from similar machine learning (ML) code review tools:
 
@@ -27,11 +29,11 @@ Other software development teams have observed many benefits from similar machin
 
 #### Live Example
 
-View [this example](https://github.com/nathan-wick/test-development-assistant/pull/9#issuecomment-3509078039) to see Code Reviewer in action!
+View [this example](https://github.com/nathan-wick/test-development-assistant/pull/8#issuecomment-3567181843) to see Sous Chef in action!
 
 ## How It Works
 
-![diagram](https://github.com/nathan-wick/development-assistant/blob/main/assets/images/diagram.png)
+![diagram](https://github.com/nathan-wick/sous-chef/blob/main/assets/images/diagram.png)
 
 ## Estimated Cost
 
@@ -39,7 +41,7 @@ View [this example](https://github.com/nathan-wick/test-development-assistant/pu
 
 Running a self-hosted LLM gives you **full control** and **privacy**, but requires substantial compute resources and maintenance.
 
-#### 💰 Estimated Cost Per 1-50 Developers by Model
+#### Estimated Cost Per 1-50 Developers by Model
 
 | Category              | codellama:70b | gpt-oss:120b | deepseek-r1:671b |
 | --------------------- | ------------- | ------------ | ---------------- |
@@ -53,7 +55,7 @@ Running a self-hosted LLM gives you **full control** and **privacy**, but requir
 
 Using an API-based LLM requires **no additional hardware**, **scales automatically**, and is significantly **more economical** than self-hosting.
 
-#### 💰 Estimated Cost Per 10 Developers by Model
+#### Estimated Cost Per 10 Developers by Model
 
 | Category              | Gemini 2.5 Flash | Gemini 2.5 Pro | Sonnet 4.5 |
 | --------------------- | ---------------- | -------------- | ---------- |
@@ -61,21 +63,19 @@ Using an API-based LLM requires **no additional hardware**, **scales automatical
 | **Monthly Operating** | $5               | $5             | $5         |
 | **Monthly API Fees**  | $1               | $4             | $6         |
 
-(as of November 2025)
-
-#### 🤔 Why So Affordable?
+#### Why So Affordable?
 
 API LLM providers can offer services at costs that self-hosting cannot beat for the following reasons:
 
 - **Economies of Scale**. Providers run massive inference clusters serving thousands of customers simultaneously.
 - **Competition**. The API LLM market is competitive, and providers strategically set prices to gain market share.
 
-#### 🕵️‍♂️ Data Privacy
+#### Data Privacy
 
-If sending code to an external service concerns you, here's why Code Reviewer's approach is designed with security in mind:
+If sending code to an external service concerns you, here's why Sous Chef's approach is designed with security in mind:
 
-- **Minimal data exposure**. Code Reviewer sends only the specific lines that changed. Each file is reviewed in a separate request, making it practically impossible for anyone to reconstruct your codebase from fragmented patches scattered across isolated API calls.
-- **You stay in control**. Exclude sensitive files, directories, or patterns entirely. If certain code should never leave your environment, Code Reviewer will never send it.
+- **Minimal data exposure**. Sous Chef sends only the specific lines that changed. Each file is reviewed in a separate request, making it practically impossible for anyone to reconstruct your codebase from fragmented patches scattered across isolated API calls.
+- **You stay in control**. Exclude sensitive files, directories, or patterns entirely. If certain code should never leave your environment, Sous Chef will never send it.
 - **Zero retention**. Most providers offer Zero Data Retention (ZDR) to prevent any training from, or storage of, your data. With ZDR, code is processed in memory and immediately discarded.
 - **Verified security**. Leading providers maintain SOC 2 Type II and ISO 27001 certifications, which require ongoing third-party security audits.
 - **Legal and financial incentives**. Leading providers have multi-billion-dollar valuations at stake. A single data breach or misuse scandal would be catastrophic for their business.
