@@ -1,8 +1,9 @@
-import asyncio
 import logging
 
 from configuration import Configuration
 from llm.client import LlmClient
+from platform_adapters.github import GitHubPlatform
+from platform_adapters.gitlab import GitLabPlatform
 from platform_adapters.models import PullRequestEvent, FileChange
 
 logger = logging.getLogger(__name__)
@@ -16,20 +17,20 @@ class Reviewer:
         self.github_platform = None
         self.gitlab_platform = None
 
-    def set_github_platform(self, platform): # type: ignore
-        self.github_platform = platform # type: ignore
+    def set_github_platform(self, platform: GitHubPlatform):
+        self.github_platform = platform
 
-    def set_gitlab_platform(self, platform): # type: ignore
-        self.gitlab_platform = platform # type: ignore
+    def set_gitlab_platform(self, platform: GitLabPlatform):
+        self.gitlab_platform = platform
 
     async def post_comment(self, event: PullRequestEvent, message: str) -> None:
         try:
-            if self.github_platform is not None: # type: ignore
-                await self.github_platform.post_comment( # type: ignore
+            if self.github_platform is not None:
+                await self.github_platform.post_comment(
                     event.owner, event.repo, event.number, message
                 )
-            elif self.gitlab_platform is not None: # type: ignore
-                await self.gitlab_platform.post_comment( # type: ignore
+            elif self.gitlab_platform is not None:
+                await self.gitlab_platform.post_comment(
                     event.owner, event.number, message
                 )
         except Exception as error:
@@ -46,30 +47,6 @@ class Reviewer:
         
         return False
 
-    async def review_file(self, file: FileChange) -> str:
-        prompt = (
-            f"{self.configuration.review.review_prompt}\n\n"
-            f"File: {file.filename}\n\n"
-            f"Changes:\n```\n{file.patch}\n```"
-        )
-        
-        response = await self.llm_client.generate(prompt)
-        return response.strip()
-    
-    def is_rate_limit_error(self, error: Exception) -> bool:
-        return "429" in str(error)
-    
-    async def review_file_with_retry(self, file: FileChange, reviewNumber: int, maximumRetries: int, currentRetry: int = 0) -> str:
-        try:
-            return await self.review_file(file)
-        except Exception as error:
-            if self.is_rate_limit_error(error) and currentRetry < maximumRetries:
-                logger.warning(f"Rate limit hit for review #{reviewNumber}, retrying in 30 seconds...")
-                await asyncio.sleep(30)
-                currentRetry += 1
-                return await self.review_file_with_retry(file, reviewNumber, maximumRetries, currentRetry)
-            raise
-
     async def review_pull_request(self, event: PullRequestEvent) -> str:
         greeting_message = (
             "🤖 Hello! I'm reviewing your changes now. This may take a moment..."
@@ -84,61 +61,58 @@ class Reviewer:
             "catching common issues early."
         ]
 
+        file_prompts: list[str] = []
+        file_list: list[FileChange] = []
+
         file_count = 0
-        maximum_files = self.configuration.review.maximum_files
 
         for file in event.files:
-            if file_count >= maximum_files:
+            if file_count >= self.configuration.review.maximum_files:
                 reviews.append(
                     f"🛑 Too many files to review. Only reviewed the first "
-                    f"{maximum_files} files."
+                    f"{self.configuration.review.maximum_files} files."
                 )
-                logger.info(f"Maximum file review limit reached for review #{event.number}")
                 break
+
+            if file.status == "removed":
+                continue
 
             if self.is_file_blocked(file.filename):
                 reviews.append(
                     f"### ⏭️ 📄 {file.filename}\n\n"
                     f"Skipped review."
                 )
-                logger.info(f"Skipped reviewing {file.filename} for review #{event.number} because the file's name had a blocked keyword")
                 continue
-
-            patch_size = len(file.patch)
-            maximum_size = self.configuration.review.maximum_file_size_characters
             
-            if patch_size > maximum_size:
+            if len(file.patch) > self.configuration.review.maximum_file_size_characters:
                 reviews.append(
                     f"### 🐘 📄 {file.filename}\n\n"
                     f"File changes are too large to review."
                 )
-                logger.info(f"Skipped reviewing {file.filename} for review #{event.number} because the file's changes are too large")
                 continue
 
-            if file.status == "removed":
-                logger.info(f"Skipped reviewing {file.filename} for review #{event.number} because the file was removed")
-                continue
+            prompt: str = (
+                f"{self.configuration.review.review_prompt}\n\n"
+                f"File Name: {file.filename}\n\n"
+                f"Changes:\n```\n{file.patch}\n```"
+            )
 
-            try:
-                review = await self.review_file_with_retry(file, event.number, 3)
-                
-                if not review or "no issues" in review.lower():
-                    reviews.append(f"### ✅ 📄 {file.filename}\n\nNo issues detected.")
-                else:
-                    reviews.append(f"### ⚠️ 📄 {file.filename}\n\n{review}")
-                
-                file_count += 1
+            file_prompts.append(prompt)
+            file_list.append(file)
+            file_count += 1
 
-                logger.info(f"Finished reviewing {file.filename} for review #{event.number}")
-            except Exception as error:
-                reviews.append(
-                    f"### 🌋 📄 {file.filename}\n\n"
-                    f"Error reviewing: {error}"
-                )
-                logger.error(f"Errored while reviewing {file.filename} for review #{event.number}: {error}")
-
-        if len(reviews) <= 1:
+        if not file_prompts:
             reviews.append("No changes to review.")
+
+        logger.info(f"Sending #{len(file_prompts)} prompts to the LLM for review #{event.number}")
+
+        llm_responses = await self.llm_client.generate_batch(file_prompts)
+
+        for file, response in zip(file_list, llm_responses):
+            if not response or "no issues" in response.lower():
+                reviews.append(f"### ✅ 📄 {file.filename}\n\nNo issues detected.")
+            else:
+                reviews.append(f"### ⚠️ 📄 {file.filename}\n\n{response}")
 
         logger.info(f"Review #{event.number} is complete")
 
